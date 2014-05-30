@@ -75,6 +75,24 @@
 		this._init();
 	}
 
+	// IE Fallback for array prototype slice
+	if(navigator.appVersion.indexOf('MSIE 8') > 0) {
+	    var _slice = Array.prototype.slice;
+	    Array.prototype.slice = function() {
+	      if(this instanceof Array) {
+	        return _slice.apply(this, arguments);
+	      } else {
+	        var result = [];
+	        var start = (arguments.length >= 1) ? arguments[0] : 0;
+	        var end = (arguments.length >= 2) ? arguments[1] : this.length;
+	        for(var i=start; i<end; i++) {
+	          result.push(this[i]);
+	        }
+	        return result;
+	      }
+	    };
+	  }
+
 	AnimOnScroll.prototype = {
 		defaults : {
 			// Minimum and a maximum duration of the animation (random value is chosen)
