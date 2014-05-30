@@ -105,7 +105,6 @@
 		},
 		_init : function() {
 			this.items = Array.prototype.slice.call( document.querySelectorAll( '#' + this.el.id + ' > li' ) );
-			//this.items = Array.prototype.slice.call( document.querySelectorAll( '#' + this.el.id + ' > li' ) instanceof Object);
 			this.itemsCount = this.items.length;
 			this.itemsRenderedCount = 0;
 			this.didScroll = false;
