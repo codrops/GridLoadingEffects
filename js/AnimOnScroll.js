@@ -75,6 +75,7 @@
 		this._init();
 	}
 
+	// IE Fallback for array prototype slice
 	if(navigator.appVersion.indexOf('MSIE 8') > 0) {
 	    var _slice = Array.prototype.slice;
 	    Array.prototype.slice = function() {
@@ -194,9 +195,3 @@
 	window.AnimOnScroll = AnimOnScroll;
 
 } )( window );
-
-/*
-(function() {
-  
-})();
-*/
