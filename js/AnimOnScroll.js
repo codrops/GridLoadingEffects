@@ -75,6 +75,23 @@
 		this._init();
 	}
 
+	if(navigator.appVersion.indexOf('MSIE 8') > 0) {
+	    var _slice = Array.prototype.slice;
+	    Array.prototype.slice = function() {
+	      if(this instanceof Array) {
+	        return _slice.apply(this, arguments);
+	      } else {
+	        var result = [];
+	        var start = (arguments.length >= 1) ? arguments[0] : 0;
+	        var end = (arguments.length >= 2) ? arguments[1] : this.length;
+	        for(var i=start; i<end; i++) {
+	          result.push(this[i]);
+	        }
+	        return result;
+	      }
+	    };
+	  }
+
 	AnimOnScroll.prototype = {
 		defaults : {
 			// Minimum and a maximum duration of the animation (random value is chosen)
@@ -86,8 +103,8 @@
 			viewportFactor : 0
 		},
 		_init : function() {
-			//this.items = Array.prototype.slice.call( document.querySelectorAll( '#' + this.el.id + ' > li' ) );
-			this.items = Array.prototype.slice.call( document.querySelectorAll( '#' + this.el.id + ' > li' ) instanceof Object);
+			this.items = Array.prototype.slice.call( document.querySelectorAll( '#' + this.el.id + ' > li' ) );
+			//this.items = Array.prototype.slice.call( document.querySelectorAll( '#' + this.el.id + ' > li' ) instanceof Object);
 			this.itemsCount = this.items.length;
 			this.itemsRenderedCount = 0;
 			this.didScroll = false;
@@ -177,3 +194,9 @@
 	window.AnimOnScroll = AnimOnScroll;
 
 } )( window );
+
+/*
+(function() {
+  
+})();
+*/
