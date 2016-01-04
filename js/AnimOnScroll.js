@@ -8,6 +8,7 @@
  * Copyright 2013, Codrops
  * http://www.codrops.com
  */
+
 ;( function( window ) {
 	
 	'use strict';
@@ -69,29 +70,66 @@
 		return a;
 	}
 
+	function onScrollHandler() {
+		var self = this;
+		if( !this.didScroll ) {
+			this.didScroll = true;
+			setTimeout( function() { self._scrollPage(); }, 60 );
+		}
+	};
+
 	function AnimOnScroll( el, options ) {	
 		this.el = el;
 		this.options = extend( this.defaults, options );
+		
+		this._onScrollFn = onScrollHandler.bind( this );
+
 		this._init();
 	}
 
 	// IE Fallback for array prototype slice
 	if(navigator.appVersion.indexOf('MSIE 8') > 0) {
-	    var _slice = Array.prototype.slice;
-	    Array.prototype.slice = function() {
-	      if(this instanceof Array) {
-	        return _slice.apply(this, arguments);
-	      } else {
-	        var result = [];
-	        var start = (arguments.length >= 1) ? arguments[0] : 0;
-	        var end = (arguments.length >= 2) ? arguments[1] : this.length;
-	        for(var i=start; i<end; i++) {
-	          result.push(this[i]);
-	        }
-	        return result;
-	      }
-	    };
+		var _slice = Array.prototype.slice;
+		Array.prototype.slice = function() {
+		  if(this instanceof Array) {
+			return _slice.apply(this, arguments);
+		  } else {
+			var result = [];
+			var start = (arguments.length >= 1) ? arguments[0] : 0;
+			var end = (arguments.length >= 2) ? arguments[1] : this.length;
+			for(var i=start; i<end; i++) {
+			  result.push(this[i]);
+			}
+			return result;
+		  }
+		};
 	  }
+
+	// Function.prototype.bind polyfill
+	if( !Function.prototype.bind ) {
+		Function.prototype.bind = function( oThis ) {
+			if( typeof this !== 'function' ) {
+				// closest thing possible to the ECMAScript 5
+				// internal IsCallable function
+				throw new TypeError('Function.prototype.bind - what is trying to be bound is not callable');
+			}
+
+			var aArgs   = Array.prototype.slice.call( arguments, 1 ),
+				fToBind = this,
+				fNOP    = function() {},
+				fBound  = function() {
+					return fToBind.apply( this instanceof fNOP
+						? this
+						: oThis,
+						aArgs.concat( Array.prototype.slice.call( arguments ) ) );
+				};
+
+			fNOP.prototype = this.prototype;
+			fBound.prototype = new fNOP();
+
+			return fBound;
+		};
+	}
 
 	AnimOnScroll.prototype = {
 		defaults : {
@@ -129,22 +167,13 @@
 					} );
 
 					// animate on scroll the items inside the viewport
-					window.addEventListener( 'scroll', function() {
-						self._onScrollFn();
-					}, false );
+					window.addEventListener( 'scroll', self._onScrollFn, false );
 					window.addEventListener( 'resize', function() {
 						self._resizeHandler();
 					}, false );
 				}
 
 			});
-		},
-		_onScrollFn : function() {
-			var self = this;
-			if( !this.didScroll ) {
-				this.didScroll = true;
-				setTimeout( function() { self._scrollPage(); }, 60 );
-			}
 		},
 		_scrollPage : function() {
 			var self = this;
